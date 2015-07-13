@@ -1,98 +1,139 @@
-<!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="UTF-8">
-    <title>Java基础知识整理---环境变量配置 by msx123456</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
-  </head>
-  <body>
-    <section class="page-header">
-      <h1 class="project-name">Java基础知识整理---环境变量配置</h1>
-      <h2 class="project-tagline">环境变量配置</h2>
-    </section>
+<!doctype html>
+<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
+<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on https://github.com/jonrohan -->
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-    <section class="main-content">
-      <p>环境变量配置估计对Java初学者来说，是个难以理解的东西，对此我将从以下几个方面对它进行介绍，希望能帮助大家很好地理解：</p>
+  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen">
+  <link rel="stylesheet" href="stylesheets/github-dark.css">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="javascripts/script.js"></script>
+
+  <title>Java面试集锦-----Java内存模型及内存间交互操作</title>
+  <meta name="description" content="Java内存模型及内存间交互操作">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <header>
+      <h1 class="title">Java面试集锦-----Java内存模型及内存间交互操作</h1>
+    </header>
+    <div id="container">
+      <p class="tagline">Java内存模型及内存间交互操作</p>
+      <div id="main" role="main">
+        <div class="download-bar">
+        <div class="inner">
+          <a href="https://github.com/msx123456" class="code">View Java面试集锦-----Java内存模型及内存间交互操作 on GitHub</a>
+        </div>
+        <span class="blc"></span><span class="trc"></span>
+        </div>
+        <article class="markdown-body">
+          <p>今年9月份要找工作，无意间看到一篇博客，就想着把里面的知识点总结一下，巩固一下基础知识，为找工作做一些准备：
+<a href="http://blog.csdn.net/pistolove/article/details/46753275">http://blog.csdn.net/pistolove/article/details/46753275</a></p>
 
 <ul>
-<li><strong>为什么要配置环境变量</strong></li>
-<li><strong>path环境变量的作用</strong></li>
-<li><strong>怎么配置path环境变量</strong></li>
-<li><strong>classpath环境变量的作用</strong></li>
-<li><strong>怎么配置classpath环境变量</strong></li>
+<li><strong>Java内存模型</strong></li>
+<li><strong>内存间交互操作</strong></li>
 </ul>
 
 <hr>
 
 <h2>
-<a id="环境变量的概念及配置原因" class="anchor" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%9A%84%E6%A6%82%E5%BF%B5%E5%8F%8A%E9%85%8D%E7%BD%AE%E5%8E%9F%E5%9B%A0" aria-hidden="true"><span class="octicon octicon-link"></span></a>环境变量的概念及配置原因</h2>
+<a id="java内存模型的概述" class="anchor" href="#java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%A6%82%E8%BF%B0" aria-hidden="true"><span class="octicon octicon-link"></span></a>Java内存模型的概述</h2>
 
 <blockquote>
-<p>环境变量是在操作系统中一个具有特定名字的对象，它包含了一个或者多个应用程序所将使用到的信息。例如Windows和DOS操作系统中的path环境变量，当要求系统运行一个程序而没有告诉它程序所在的完整路径时，系统除了在当前目录下面寻找此程序外，还应到path中指定的路径去找。用户通过设置环境变量，来更好的运行进程。   —— <a href="http://baike.baidu.com/link?url=HtG2BSX6VUSO9ONUHk-2-ls78fp7CmDtMAInuzb4M4ATTf0ngbz3Uexre1H9GMrAy9sZCFRBGdRJgkFXWzsqGa" target="_blank"> [ 百度百科 ]</a></p>
+<p><strong>内存模型概念：</strong>屏蔽掉各种硬件和操作系统的内存访问差异，以实现让Java程序在各种平台下都能达到一致的内存访问效果。</p>
+
+<p><strong>Java内存模型目标：</strong> 定义程序中各变量的访问规则，即在虚拟机中将变量存储到内存和从内存中取出变量这样的底层细节。</p>
 </blockquote>
 
-<p>如果执行某个命令，系统无法在当前文件夹里找到对应的.exe，那么系统就会去path包含的路径找挨个找看是否能知道对应的.exe，一旦找到第一个对应的.exe就运行命令，其他的路径下就不找了。如果找不到你就会看到“系统找不到某某命令”的提示。
-其他的环境变量也一样的用途，只不过是用来存储一些信息用的，这些信息可以被系统使用，也可以被你的应用程序使用。</p>
+<ul>
+<li>
+<strong>Java内存模型的规定</strong>
 
-<h3>
-<a id="path环境变量" class="anchor" href="#path%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F" aria-hidden="true"><span class="octicon octicon-link"></span></a>path环境变量</h3>
+<ul>
+<li>所有的变量都存储在主内存中。</li>
+<li>每条线程都有自己的工作内存。</li>
+<li>不同的线程之间无法直接访问对方工作内存中的变量，线程间变量值的传递均需要通过主内存才能完成。</li>
+</ul>
+</li>
+<li>
+<strong>注意事项</strong>
 
-<h4>
-<a id="path环境变量的作用" class="anchor" href="#path%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%9A%84%E4%BD%9C%E7%94%A8" aria-hidden="true"><span class="octicon octicon-link"></span></a>path环境变量的作用</h4>
+<ul>
+<li>上述的变量包括实例字段、静态字段和构成数组对象的元素，但不包括局部变量和方法参数（以为它们是线程私有的，不共享）。</li>
+<li>线程的工作内存中存储了被改线程使用到的变量的主内存的副本拷贝，线程对所有操作都必须在工作内存中进行，而不能直接读写主存中的变量。</li>
+<li>这里讲的主内存、工作内存与Java内存区域中的Java堆、栈、方法区并不是同一层次的内存划分， 基本上没有关系。</li>
+</ul>
+</li>
+</ul>
 
-<p>作用：保证javac命令可以在任意目录下运行。</p>
+<h2>
+<a id="内存间交互操做" class="anchor" href="#%E5%86%85%E5%AD%98%E9%97%B4%E4%BA%A4%E4%BA%92%E6%93%8D%E5%81%9A" aria-hidden="true"><span class="octicon octicon-link"></span></a>内存间交互操做</h2>
 
 <blockquote>
-<p>不配环境变量只能写在java根目录下的bin目录下（.exe）。要想在你想在的目录下运行，就需要配置环境变量（否则会出现javac不是内部或外部命令）。</p>
+<p>存在两个问题：
+1、一个变量如何从主内存拷贝到工作内存？
+2、如何从工作内存同步回主内存？
+对于这两个问题，Java内存模型中定义了8种操作来完成，虚拟机实现时必须保证下面提及的每一个操作都是原子的、不可再分的（double、long类型除外）。</p>
 </blockquote>
 
-<h4>
-<a id="path环境变量的配置" class="anchor" href="#path%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%9A%84%E9%85%8D%E7%BD%AE" aria-hidden="true"><span class="octicon octicon-link"></span></a>path环境变量的配置</h4>
+<ul>
+<li>
+<strong>8种操作</strong>
 
-<p>配置如下：</p>
+<ul>
+<li>lock（锁定）：作用于主内存的变量，把一个变量标识为一条线程独占的状态。</li>
+<li>unclock（解锁）：作用于主内存的变量，把一个处于锁定状态的变量释放出来，释放后的变量才可以被其他线程锁定。</li>
+<li>read（读取）：作用于主内存的变量，把一个变量的值从主内存传输到线程的工作内存，以便随后的load动作使用。</li>
+<li>load（载入）：作用于工作内存的变量，把read操作从主内存中得到的变量值放入工作内存的变量副本中。</li>
+<li>use（使用）：作用于工作内存的变量，把工作内存中一个变量的值传递给执行引擎。</li>
+<li>assign（赋值）：作用于工作内存的变量，把执行引擎接收到的值赋给工作内存的变量。</li>
+<li>store（存储）：作用于工作内存的变量，把工作内存中一个变量的值传送给主内存中，以便随后的write操作使用。</li>
+<li>write（写入）：作用于主内存的变量，把store操作从工作内存中得到的变量的值放入主内存的变量中。</li>
+</ul>
+</li>
+<li>
+<strong>操作的规定</strong>
 
-<div class="highlight highlight-python"><pre>    找到环境变量的位置，在系统变量里面
-            新建：
-                变量名：JAVA_HOME
-                变量值：D:\<span class="pl-ii">develop\Java\jdk1.7.0_60（这个目录是jdk的安装目录）</span>
-            修改：
-                变量名：Path
-                变量值：<span class="pl-k">%</span>JAVA_HOME<span class="pl-k">%</span>\<span class="pl-ii">bin;以前的内容</span></pre></div>
+<ul>
+<li>不允许read和load、store和write操作之一单独出现，即不允许一个变量从主内存中读取了但工作内存不接受，或者工作内存发起了回写但主内存不接受的情况出现。</li>
+<li>不允许一个线程丢弃它的最近的assign操作，即变量在工作内存中改变了之后必须把该变化同步到主内存。</li>
+<li>不允许一个线程无原因地（没有发生任何assign操作）把数据从线程的工作内存同步到主内存。</li>
+<li>一个新的变量只能在主内存中诞生，不允许在工作内存中直接使用一个未被初始化（load或assign）的变量，换句话说，就是对一个变量use、store操作之前，必须先执行过了assign和load操作。</li>
+<li>一个变量在同一时刻只允许一个线程对其进行lock操作，但lock操作可以被同一条线程重复执行多次，多次执行lock后，只有执行相同次数的unclock操作，变量才会被解锁。</li>
+<li>如果对一个变量执行lock操作，那么会清空工作内存次变量的值，在执行引擎使用这个变量前，需要重新执行load或assign操作初始化变量的值。</li>
+<li>如果对一个变量执行lock操作，那么会清空工作内存次变量的值，在执行引擎使用这个变量前，需要重新执行load或assign操作初始化变量的值。</li>
+<li>对一个变量执行unclock之前，必须先把此变量同步回主内存中（执行store、write操作）。</li>
+</ul>
+</li>
+</ul>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="owner">
 
-<h3>
-<a id="classpath环境变量" class="anchor" href="#classpath%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F" aria-hidden="true"><span class="octicon octicon-link"></span></a>classpath环境变量</h3>
+      <p><a href="https://github.com/msx123456" class="avatar"><img src="https://avatars2.githubusercontent.com/u/10338844?v=3&amp;s=60" width="48" height="48"></a>View <a href="https://github.com/msx123456">msx123456</a> on <a href="https://www.github.com">GitHub</a></p>
 
-<h4>
-<a id="classpath环境变量的作用" class="anchor" href="#classpath%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%9A%84%E4%BD%9C%E7%94%A8" aria-hidden="true"><span class="octicon octicon-link"></span></a>classpath环境变量的作用</h4>
-
-<p>作用：保证class文件可以在任意目录下运行。</p>
-
-<h4>
-<a id="classpath环境变量的配置" class="anchor" href="#classpath%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%9A%84%E9%85%8D%E7%BD%AE" aria-hidden="true"><span class="octicon octicon-link"></span></a>classpath环境变量的配置</h4>
-
-<p>配置如下：</p>
-
-<div class="highlight highlight-python"><pre>    找到环境变量的位置，在系统变量里面
-        新建或者修改：
-            变量名：CLASSPATH
-            变量值：.;<span class="pl-k">%</span>JAVA_HOME<span class="pl-k">%</span>\<span class="pl-ii">lib\dt.jar;%JAVA_HOME%\lib\tools.jar;（写在最前面）</span>
-
-</pre></div>
-
-<hr>
-
-      <footer class="site-footer">
-
-        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
-      </footer>
-
-    </section>
+      </div>
+      <div class="creds">
+        <small>This page generated using <a href="https://pages.github.com/">GitHub Pages</a><br>theme by <a href="https://twitter.com/jonrohan/">Jon Rohan</a></small>
+      </div>
+    </footer>
+  </div>
+  <div class="current-section">
+    <a href="#top">Scroll to top</a>
+    <a href="https://github.com/msx123456/msx123456.github.io/tarball/master" class="tar">tar</a><a href="https://github.com/msx123456/msx123456.github.io/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
+    <p class="name"></p>
+  </div>
 
   
-  </body>
+</body>
 </html>
-
